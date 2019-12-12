@@ -15,9 +15,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from views.index import index_go
+from Django_app_001.views.views_app_001 import device_add, device_select, device_del, device_update, chartjs_from_django, chartjs_from_ajax, echarts_from_django, echarts_from_ajax, index_go
+from Django_app_001.views.ajax_json import chartjs_ajax_json
+from Django_app_001.views.app_001_login import app_001_login, app_001_logout
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index_go),
+    path('device_add', device_add),
+    path('device_select', device_select),
+    path('device_del/<int:device_id>', device_del),
+    path('device_update/<int:device_id>', device_update),
+    path('chartjs_from_django', chartjs_from_django),
+    path('chartjs_from_ajax', chartjs_from_ajax),
+    path('chartjs_from_ajax/<str:chart_type>', chartjs_ajax_json),  # json_rpc
+    path('echarts_from_django', echarts_from_django),
+    path('echarts_from_ajax', echarts_from_ajax),
+
+    # login/logout
+    path('accounts/login/', app_001_login),
+    path('accounts/logout/', app_001_logout),
 ]

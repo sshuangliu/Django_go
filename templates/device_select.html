@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}
+    设备查询
+{% endblock title %}
+
+{#https://datatables.net/#}
+{% block head_001 %}
+    <link rel="stylesheet" href="http://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+{% endblock head_001 %}
+
+{% block JS_001 %}
+    <script src="http://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+{% endblock JS_001 %}
+
+{% block body %}
+
+
+<div class="container">
+
+<h2 style="color: cornflowerblue"><strong>设备查询</strong></h2><br>
+{% include 'notifaction.html' %}
+<table class="table table-bordered" id="myTable">
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">设备ID</th>
+            <th scope="col">设备名</th>
+            <th scope="col">device_sn</th>
+            <th scope="col">设备管理ip</th>
+            <th scope="col">厂家联系邮件</th>
+            <th scope="col">设备类型</th>
+            <th scope="col">是否纳管</th>
+            <th scope="col">#创建时间</th>
+            <th scope="col">更新时间</th>
+            <th scope="col">备注</th>
+            <th scope="col">操作</th>
+        </tr>
+    </thead>
+
+    <tbody>
+{#jinja2 传入的为一个字典，通过key取值#}
+        {% for item in db_all %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ item.device_id }}</td>
+                <td>{{ item.device_name }}</td>
+                <td>{{ item.device_sn }}</td>
+                <td>{{ item.device_ip }}</td>
+                <td>{{ item.mail }}</td>
+                <td>{{ item.device_type }}</td>
+                <td>{{ item.device_op }}</td>
+                <td>{{ item.create_date }}</td>
+                <td>{{ item.update_date }}</td>
+                <td>{{ item.tips }}</td>
+                <td>
+                {#                    #}
+                    <a href="{{ item.device_del }}" onclick="return confirmAct();" data-toggle="tooltip" data-placement="top" title="删除此设备信息" class="badge badge-danger">删除</a>
+                    <a href="{{ item.device_update }}"  data-toggle="tooltip" data-placement="top" title="更新此设备信息" class="badge badge-success">编辑</a>
+                </td>
+            </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+    </div>
+
+ {# DataTable渲染显示客户信息的Table #}
+    <script>
+        $(document).ready( function () {
+            $('#myTable').DataTable();
+        } );
+    </script>
+
+    {# 提示删除确认警告的JavaScript #}
+    <script type="text/javascript">
+        function confirmAct()
+        {
+            if(confirm('是否确定删除此学员?'))
+            {
+                return true;
+            }
+            return false;
+        }
+    </script>
+
+{# DataTable中点击任何一个条目变深色,表示被选中功能的JavaScript #}
+    <script>
+    $(document).ready(function() {
+        var table = $('#myTable').DataTable();
+
+        $('#myTable tbody').on( 'click', 'tr', function () {
+            if ( $(this).hasClass('selected') ) {
+                $(this).removeClass('selected');
+            }
+            else {
+                table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        } );
+
+        $('#button').click( function () {
+            table.row('.selected').remove().draw( false );
+        } );
+    } );
+    </script>
+
+{% endblock body %}

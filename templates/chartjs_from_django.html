@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}
+    数据可视化-Chartjs（Django）
+{% endblock title %}
+
+{% block JS_001 %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    {% load static %}
+    <script src="{% static "js/chart_js.js" %}"></script>
+
+{% endblock JS_001 %}
+
+{% block body %}
+    <div class="container-fluid">
+
+    <div class="jumbotron">
+      <h1 style="color: #666666">数据可视化-Chartjs（Django）</h1>
+      <p>Python网络编程第二部分HTTP协议图表测试</p>
+    </div>
+
+
+     <div class="row">
+{#         在当前行中，占用宽度为6 的第1列#}
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">线性图表测试(Django数据)</div>
+                <div class="card-body">
+                    <!-- 图表会被绘制在下面的canvas内 -->
+                    <canvas id="chart1"></canvas>
+                </div>
+            </div>
+        </div>
+
+         {#         在当前行中，占用宽度为6 的第2列#}
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">柱状图表测试(静态数据)</div>
+                <div class="card-body">
+                    <!-- 图表会被绘制在下面的canvas内 -->
+                    <canvas id="chart2"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{#    第2行，'py-5'为距离上下面div的间隔#}
+    <div class="row py-5">
+        {#    第2行第1列，占用4宽度，'py-1'为当前列 距离上下面div的间隔#}
+    <div class="col-md-4 py-4">
+        <div class="card">
+            <div class="card-header">饼状图表测试1</div>
+            <div class="card-body">
+                <canvas id="chDonut1" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 py-1">
+        <div class="card">
+            <div class="card-header">饼状图表测试2</div>
+            <div class="card-body">
+                <canvas id="chDonut2" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 py-4">
+        <div class="card">
+            <div class="card-header">饼状图表测试3</div>
+            <div class="card-body">
+                <canvas id="chDonut3" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
+
+<script type="text/javascript">
+    {# 从Django获取数据 #}
+    {# | safe filter的作用是信任Django的数据[不安全的字符(<, >, ', " or &)],不对内容进行转义 #}
+    chart_Multi_line("chart1", {{ labelname|safe }}, {{ x_values|safe }}, {{ y_values|safe }}, "{{ title|safe }}");
+    {#chart_line("chart1", "{{ chart1_label }}", {{ chart1_time|safe }}, {{ chart1_data|safe }}, {{ chart1_color|safe }});#}
+    {# 手工初始化数据 #}
+    {#chart_line("chart1",#}
+    {#           "CPU利用率",#}
+    {#          ['2018-8-1', '2018-8-2', '2018-8-3', '2018-8-4', '2018-8-5', '2018-8-6'],#}
+    {#          [1, 20, 30, 10, 42, 66],#}
+    {#          ['#007bff']);#}
+
+    {# 手工初始化数据 #}
+    chart_bar("chart2",
+               "内存利用率",
+              ['2018-8-1', '2018-8-2', '2018-8-3', '2018-8-4', '2018-8-5', '2018-8-6'],
+              [1, 20, 30, 10, 42, 66],
+              ['#007bff']);
+
+</script>
+{% endblock body %}

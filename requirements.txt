@@ -1,0 +1,9 @@
+django
+#Django==1.6
+#psycopy2==2.4.5
+#South==0.7.3
+#gunicorn==0.14.1
+#nrerelic==1.2.0.246
+#django-cerlery==2.4.2
+# 说明项目依赖python包，创建requirements文件是为了让其他开发者 拷贝你的项目代码后可以快速地根据此文件中内容安装好必须的python依赖包。
+#这样他们可以方便地运行你的代码，而不必煞费苦心地猜测项目依赖包的版本。

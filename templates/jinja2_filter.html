@@ -1,0 +1,39 @@
+<html>
+<head>
+  <title>Please input page number</title>
+</head>
+<body>
+{% if page_num %}
+  {% if page_num|int<=0 %}
+  <p style="color:red">{{ message }}</p>
+  {% else %}
+    {% for i in range(page_num|int)  %}
+    <a href="/page/{{ i }}">{{ i }}</a>
+  {% endfor %}
+  {% endif %}
+{% endif %}
+  <form action="/test01" method="post">
+    <legend>Please input page number:</legend>
+    <p><input name="page_num" placeholder=0 ></p>
+    <p><button type="submit">Sign In</button></p>
+  </form>
+</body>
+</html>
+
+
+{# 单行注释 #}
+{% comment %}
+多行注释1
+多行注释2
+{% endcomment %}
+
+{# 单行注释 #}
+      {% comment %}
+        模板过滤器:对模板变量的二次加工
+        1.lower:将模板变量的值都变成小写
+        2.upper:将模板变量的值都变成大写
+        3.trucatewords:截取前n个单词
+        4.addslashes:在任何的反斜杠,单引号或双引号前面添加反斜杠
+        5.date:按指定的格式化字符串参数格式化date或datetime对象 {% datetime_obj|date:'Y-m-d H:i' %}
+        6.length:用于返回模板变量的长度
+      {% endcomment %}

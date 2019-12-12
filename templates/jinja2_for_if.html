@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ qytsummary_title }}
+{% endblock title %}
+
+{% block body %}
+<div class="container-fluid">
+    <h1>{{ qytsummary }}</h1>
+    {% if mytime is 6 or mytime is 0 %}
+        <p style="color: blueviolet"><strong>今天是周末</strong></p>
+    {% elif mytime > 3 %}
+        <p style="color: blueviolet"><strong>周三過去了，周末快到了</strong></p>
+    {% else %}
+        <p style="color: blueviolet"><strong>今天不是周末</strong></p>
+    {% endif %}
+    <p style="color: red">課程</p>
+{#传一个列表#}
+    <ol>
+        {% for x in courses_list %}
+            <li>{{ x }}</li>
+        {% endfor %}
+    </ol>
+    <p style="color: blue">老師</p>
+{#传一个字典#}
+    <ul>
+        {% for x in teacher_list %}
+            <li>方向:{{ x.courses }} 講師:{{ x.teacher }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock body %}
