@@ -1,0 +1,11 @@
+[Unit]
+Description=uWSGI instance to serve Django-go
+After=network.target
+
+[Service]
+User=nginx
+Group=nginx
+ExecStart=/usr/bin/bash -c 'cd /Django_go/Django_go/; uwsgi --ini uwsgi.ini'
+
+[Install]
+WantedBy=multi-user.target

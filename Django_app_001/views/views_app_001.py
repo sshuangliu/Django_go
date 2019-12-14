@@ -62,8 +62,8 @@ def device_select(request, successmessage=None, errormessage=None):
          'create_date': item.create_date.strftime("%Y-%m-%d %H:%M:%S"),
          'update_date': item.update_date.strftime("%Y-%m-%d %H:%M:%S"),
          'tips': item.tips,
-         'device_del': '/device_del/' + str(item.id),
-         'device_update': '/device_update/' + str(item.id)} for item in db_infor]
+         'device_del': '/Django_app_001/device_del/' + str(item.id),
+         'device_update': '/Django_app_001/device_update/' + str(item.id)} for item in db_infor]
     print(db_all)
     return render(request, 'device_select.html',
                   {'db_all': db_all, 'successmessage': successmessage, 'errormessage': errormessage})

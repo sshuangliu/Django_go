@@ -24,7 +24,7 @@ SECRET_KEY = '*vtx-4=&*px=^c=m8&t%x79jg)7ch_7&8c8)lu4&w_$2z-2w5z'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 # request中host字段匹配才能响应
-ALLOWED_HOSTS = ['192.168.59.37']
+ALLOWED_HOSTS = ['192.168.59.37', '192.168.1.114']
 
 # Application definition
 
@@ -108,13 +108,14 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Chongqing'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+# 取消使用時區
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
