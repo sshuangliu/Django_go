@@ -4,7 +4,8 @@ from django.shortcuts import render
 
 from django.shortcuts import render
 from Django_app_001.forms import Device_infor, Device_update
-from Django_app_001.models import OPRS_DB, CPU_memory_utli
+from Django_app_001.models import OPRS_DEVICE_Base, OPRS_DEVICE_Extension, OPRS_DEVICE_CPU_utli, \
+    OPRS_DEVICE_Memory_utli, OPRS_DEVICE_Tips
 import json
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
@@ -32,15 +33,21 @@ def device_add(request):
         # return True
         # place the form’s data in its cleaned_data attribute.
         if form_post.is_valid():  # 调用clear函数去后台检查约束条件，有两个动作去执行
-            oprs_add = OPRS_DB(device_name=request.POST.get('device_name'),
+            # 外键关联表 写入各自数据
+            device_base = OPRS_DEVICE_Base(
+                               device_name=request.POST.get('device_name'),
                                device_sn=request.POST.get('device_sn'),
-                               device_ip=request.POST.get('device_ip'),
-                               mail=request.POST.get('mail'),
                                device_type=request.POST.get('device_type'),
-                               device_op=request.POST.get('device_op'),
-                               tips=request.POST.get('tips'),
+                               device_module=request.POST.get('device_module'),
                                )
-            oprs_add.save()
+            device_base.save()
+
+            device_ex = OPRS_DEVICE_Extension(oprs_device_base=device_base, device_nas_ip=request.POST.get('device_nas_ip'), Vendor=request.POST.get('Vendor'))
+            device_ex.save()
+
+            device_tips = OPRS_DEVICE_Tips(oprs_device_extension=device_ex, tips=request.POST.get('tips'))
+            device_tips.save()
+
             form = Device_infor()
             return render(request, 'device_add.html', {'form': form, 'successmessage': '设备添加完成!'})
         else:
@@ -50,20 +57,21 @@ def device_add(request):
 # @permission_required('Django_app_001.view_oprs_db')
 @login_required()
 def device_select(request, successmessage=None, errormessage=None):
-    db_infor = OPRS_DB.objects.all()
+    base_infor = OPRS_DEVICE_Base.objects.all()
+    print(base_infor)
     db_all = [
-        {'device_id': item.id,
-         'device_name': item.device_name,
+        {'device_name': item.device_name,
          'device_sn': item.device_sn,
-         'device_ip': item.device_ip,
-         'mail': item.mail,
+         'device_module': item.device_module,
          'device_type': item.device_type,
-         'device_op': item.device_op,
          'create_date': item.create_date.strftime("%Y-%m-%d %H:%M:%S"),
          'update_date': item.update_date.strftime("%Y-%m-%d %H:%M:%S"),
-         'tips': item.tips,
+         'device_init': item.oprs_device_extension.device_init,
+         'device_nas_ip': item.oprs_device_extension.device_nas_ip,
+         'Vendor': item.oprs_device_extension.Vendor,
+         'tips': item.oprs_device_extension.oprs_device_tips.tips,
          'device_del': '/Django_app_001/device_del/' + str(item.id),
-         'device_update': '/Django_app_001/device_update/' + str(item.id)} for item in db_infor]
+         'device_update': '/Django_app_001/device_update/' + str(item.id)} for item in base_infor]
     print(db_all)
     return render(request, 'device_select.html',
                   {'db_all': db_all, 'successmessage': successmessage, 'errormessage': errormessage})

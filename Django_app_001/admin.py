@@ -7,10 +7,10 @@ from django.contrib import admin
 # user = User.objects.create_superuser('admin', 'admin@xxoo.com', 'haha')
 
 # 注册被管理的DB
-from Django_app_001.models import OPRS_DB, CPU_memory_utli
+# from Django_app_001.models import OPRS_DB, CPU_memory_utli
 
-admin.site.register(OPRS_DB)
-admin.site.register(CPU_memory_utli)
+# admin.site.register(OPRS_DB)
+# admin.site.register(CPU_memory_utli)
 
 
 # 查看后台用户的数据库权限：

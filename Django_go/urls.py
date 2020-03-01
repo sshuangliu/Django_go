@@ -27,5 +27,6 @@ urlpatterns = [
     path('accounts/logout/', app_001_logout),
 
     # app urls模块路径，app名字，APP的唯一namespace
-    path('Django_app_001/', include(('Django_app_001.urls', 'Django_app_001'), namespace='Django_app_001'))
+    path('Django_app_001/', include(('Django_app_001.urls', 'Django_app_001'), namespace='Django_app_001')),
+    path('Http_request/', include(('Http_request.urls', 'Http_request'), namespace='Http_request'))
 ]

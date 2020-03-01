@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-#@Time  : 2019/12/8 21:58
-#@Author: max liu
-#@File  : db_test_001.py
+# @Time  : 2019/12/8 21:58
+# @Author: max liu
+# @File  : db_test_001.py
 
 # 默认Django不允许手动写入数据到DB,通过表单写入
 # import django
@@ -12,6 +12,7 @@
 
 
 from Django_app_001.models import Department
+from Django_app_001.models import OPRS_DEVICE_Base
 import json
 
 # 表结构
@@ -44,7 +45,6 @@ depart2 = Department(name='安全',
                      detail=json.dumps(['FW', 'VPN', 'IDS', 'Hacker']))
 depart2.save()
 
-
 depart3 = Department(name='安全',
                      summary='主要讲解网络安全知识',
                      teacher='大婶',
@@ -53,8 +53,6 @@ depart3 = Department(name='安全',
                      if_provide_lab=True,
                      detail=json.dumps(['FW', 'VPN', 'IDS', 'Hacker']))
 depart3.save()
-
-
 
 # search Data  返回值为一个类，通过其类属性（表列名）获取值
 # try:
@@ -80,7 +78,6 @@ depart3.save()
 #
 
 
-
 # delete data
 # wir_depart = Department.objects.get(teacher='大叔', name='安全')
 # wir_depart.delete()
@@ -92,4 +89,42 @@ depart3.save()
 
 # Department.objects.all().delete()
 
+from Django_app_001.models import OPRS_DEVICE_Base, OPRS_DEVICE_Extension, OPRS_DEVICE_CPU_utli, \
+    OPRS_DEVICE_Memory_utli, OPRS_DEVICE_Tips
 
+device_base = OPRS_DEVICE_Base(device_name='csr1000v_001', device_sn='123456FEWE1',
+                               device_module='X86_64_LINUX_IOSD-UNIVERSALK9-M', device_type='router')
+device_base.save()
+
+device_ex = OPRS_DEVICE_Extension(oprs_device_base=device_base, device_init=True, device_nas_ip='1.2.3.4',
+                                  Vendor='Cisco')
+device_ex.save()
+
+device_tips = OPRS_DEVICE_Tips(oprs_device_extension=device_ex, tips='hahaahhahah')
+device_tips.save()
+
+device_cpu = OPRS_DEVICE_CPU_utli(oprs_device_base=device_base, cpu_utli=21)
+device_cpu.save()
+device_cpu = OPRS_DEVICE_CPU_utli(oprs_device_base=device_base, cpu_utli=22)
+device_cpu.save()
+device_cpu = OPRS_DEVICE_CPU_utli(oprs_device_base=device_base, cpu_utli=23)
+device_cpu.save()
+
+device_mem = OPRS_DEVICE_Memory_utli(oprs_device_base=device_base, memory_utli=81)
+device_mem.save()
+device_mem = OPRS_DEVICE_Memory_utli(oprs_device_base=device_base, memory_utli=82)
+device_mem.save()
+device_mem = OPRS_DEVICE_Memory_utli(oprs_device_base=device_base, memory_utli=83)
+device_mem.save()
+
+device_cpu = OPRS_DEVICE_CPU_utli.objects.get(id=1)
+device_cpu.oprs_device_base.device_type
+##################################
+
+
+
+device_base = OPRS_DEVICE_Base(device_name='nexus7000', device_sn='123W56FE2E1',
+                               device_module='NEXUS7009', device_type='switch')
+device_base.save()
+
+# device_base.oprs_device_extension.

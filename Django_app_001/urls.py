@@ -8,7 +8,7 @@
 from django.urls import path, include
 from Django_app_001.views.views_app_001 import device_add, device_select, device_del, device_update, \
     chartjs_from_django, chartjs_from_ajax, echarts_from_django, echarts_from_ajax
-from Django_app_001.views.ajax_json import chartjs_ajax_json
+from Django_app_001.views.ajax_json_rpc import chartjs_ajax_json
 
 urlpatterns = [
 

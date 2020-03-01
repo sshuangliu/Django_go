@@ -23,35 +23,41 @@
     <thead class="thead-light">
         <tr>
             <th scope="col">#</th>
-            <th scope="col">设备ID</th>
             <th scope="col">设备名</th>
-            <th scope="col">device_sn</th>
             <th scope="col">设备管理ip</th>
-            <th scope="col">厂家联系邮件</th>
+            <th scope="col">设备型号</th>
             <th scope="col">设备类型</th>
-            <th scope="col">是否纳管</th>
-            <th scope="col">#创建时间</th>
-            <th scope="col">更新时间</th>
+            <th scope="col">设备在线状态</th>
+            <th scope="col">厂商</th>
+            <th scope="col">设备SN</th>
             <th scope="col">备注</th>
+            <th scope="col">更新时间</th>
+            <th scope="col">创建时间</th>
             <th scope="col">操作</th>
         </tr>
     </thead>
 
     <tbody>
-{#jinja2 传入的为一个字典，通过key取值#}
+{#jinja2 传入的为一个字典构成的列表，通过key取值#}
         {% for item in db_all %}
             <tr>
                 <th scope="row">{{ forloop.counter }}</th>
-                <td>{{ item.device_id }}</td>
                 <td>{{ item.device_name }}</td>
-                <td>{{ item.device_sn }}</td>
-                <td>{{ item.device_ip }}</td>
-                <td>{{ item.mail }}</td>
+                <td>{{ item.device_nas_ip }}</td>
+                <td>{{ item.device_module }}</td>
                 <td>{{ item.device_type }}</td>
-                <td>{{ item.device_op }}</td>
-                <td>{{ item.create_date }}</td>
-                <td>{{ item.update_date }}</td>
+                <td>
+                    {% if item.device_init %}
+                    <span style="color: forestgreen">在线</span>
+                    {% else %}
+                    <span style="color: crimson">离线</span>
+                    {% endif %}
+                </td>
+                <td>{{ item.Vendor }}</td>
+                <td>{{ item.device_sn }}</td>
                 <td>{{ item.tips }}</td>
+                <td>{{ item.update_date }}</td>
+                <td>{{ item.create_date }}</td>
                 <td>
                 {#                    #}
                     <a href="{{ item.device_del }}" onclick="return confirmAct();" data-toggle="tooltip" data-placement="top" title="删除此设备信息" class="badge badge-danger">删除</a>

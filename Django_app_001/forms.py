@@ -10,7 +10,8 @@
 
 from django import forms
 from django.core.validators import RegexValidator
-from Django_app_001.models import OPRS_DB
+from Django_app_001.models import OPRS_DEVICE_Base, OPRS_DEVICE_Extension, OPRS_DEVICE_CPU_utli, \
+    OPRS_DEVICE_Memory_utli, OPRS_DEVICE_Tips
 
 
 class StudentsForm(forms.Form):
@@ -204,6 +205,7 @@ class UserForm(forms.Form):
                                )
 
 
+#####################################################################################################################
 # 添加设备的表单
 
 class Device_infor(forms.Form):
@@ -216,8 +218,34 @@ class Device_infor(forms.Form):
                                   widget=forms.TextInput(attrs={'class': "form-control"})
                                   )
 
+    device_nas_ip = forms.GenericIPAddressField(required=True,
+                                                label='设备管理地址',
+                                                widget=forms.TextInput(
+                                                    attrs={'class': "form-control", "placeholder": "ipv4 or ipv6:"})
+                                                )
+
+    device_module = forms.CharField(max_length=50,
+                                    required=True,
+                                    label='设备型号',
+                                    widget=forms.TextInput(attrs={'class': "form-control"})
+                                    )
+
+    type_choices = (
+        ('router', '路由器'), ('switch', '交换机'), ('firewall', '防火墙'), ('other', '其他'))  # 表单约束，只能选择给定，和数据库表值约束匹配
+    device_type = forms.CharField(required=True,
+                                  label='设备类型',
+                                  widget=forms.Select(choices=type_choices, attrs={'class': "form-control"})
+                                  )
+
+    Vendor_choices = (
+        ('Cisco', '思科'), ('Juniper', '瞻博'), ('H3C', '华三'), ('HUAWEI', '华为'), ('other', '其他'))  # 表单约束，只能选择给定，和数据库表值约束匹配
+    Vendor = forms.CharField(required=True,
+                             label='设备厂商',
+                             widget=forms.Select(choices=Vendor_choices, attrs={'class': "form-control"})
+                             )
+
     sn_regex = RegexValidator(regex=r'^\S*$',
-                              message="SN must be ....") # 校验失败的消息会通过form.errow推送
+                              message="SN must be ....不包含空字符")  # 校验失败的消息会通过form.errow推送
     device_sn = forms.CharField(validators=[sn_regex],
                                 max_length=11,
                                 min_length=11,
@@ -227,28 +255,10 @@ class Device_infor(forms.Form):
                                     attrs={'class': "form-control", "placeholder": "11位设备SN"})
                                 )
 
-    device_ip = forms.GenericIPAddressField(required=True,
-                                            label='设备管理地址',
-                                            widget=forms.TextInput(
-                                                attrs={'class': "form-control", "placeholder": "ipv4 or ipv6:"})
-                                            )
-
-    mail = forms.EmailField(required=False,
-                            label='厂家联系邮件',
-                            widget=forms.EmailInput(attrs={'class': "form-control"})
-                            )
-
-    direction_choices = (('router', '路由器'), ('switch', '交换机'))  # 表单约束，只能选择给定，和数据库表值约束匹配
-    device_type = forms.CharField(required=True,
-                                  label='设备类型',
-                                  widget=forms.Select(choices=direction_choices, attrs={'class': "form-control"})
-                                  )
-
-    op_choices = ((True, '已纳管'), (False, '未纳管'))
-    device_op = forms.BooleanField(required=False,
-                                   label='是否纳管',
-                                   widget=forms.Select(choices=op_choices, attrs={'class': "form-control"})
-                                   )
+    # mail = forms.EmailField(required=False,
+    #                         label='厂家联系邮件',
+    #                         widget=forms.EmailInput(attrs={'class': "form-control"})
+    #                         )
 
     tips = forms.CharField(required=False,
                            label='备注',
@@ -256,22 +266,21 @@ class Device_infor(forms.Form):
 
     def clean_device_name(self):
         device_name = self.cleaned_data.get('device_name')
-        if OPRS_DB.objects.filter(device_name=device_name).exists():
-            raise forms.ValidationError('name已存在4！')   # 抛出异常到form.errow 类
+        if OPRS_DEVICE_Base.objects.filter(device_name=device_name).exists():
+            raise forms.ValidationError('name已存在4！')  # 抛出异常到form.errow 类
         return device_name
 
     def clean_device_sn(self):
         device_sn = self.cleaned_data.get('device_sn')
-        if OPRS_DB.objects.filter(device_sn=device_sn):
+        if OPRS_DEVICE_Base.objects.filter(device_sn=device_sn):
             raise forms.ValidationError('SN已存在5！')
         return device_sn
 
-    def clean_device_ip(self):
-        device_ip = self.cleaned_data.get('device_ip')
-        if OPRS_DB.objects.filter(device_ip=device_ip):
+    def clean_device_nas_ip(self):
+        device_nas_ip = self.cleaned_data.get('device_nas_ip')
+        if OPRS_DEVICE_Extension.objects.filter(device_nas_ip=device_nas_ip):
             raise forms.ValidationError('ip已存在6！')
-        return device_ip
-
+        return device_nas_ip
 
 
 # update的表单
@@ -290,7 +299,7 @@ class Device_update(forms.Form):
                                   )
 
     sn_regex = RegexValidator(regex=r'^\S*$',
-                              message="SN must be ....") # 校验失败的消息会通过form.error推送
+                              message="SN must be ....")  # 校验失败的消息会通过form.error推送
     device_sn = forms.CharField(validators=[sn_regex],
                                 max_length=11,
                                 min_length=11,
@@ -331,14 +340,15 @@ class Device_update(forms.Form):
     def clean_device_name(self):
         device_name = self.cleaned_data.get('device_name')
         device_id = self.cleaned_data.get('device_id')
-        if [item for item in OPRS_DB.objects.filter(device_name=device_name) if item.id != int(device_id)]: # if为false，即查不到信息时，不一定完全正确，可能是一个已被删除的设备，最终判断交给view device_update主函数
-            raise forms.ValidationError('name已存在1！')   # 抛出异常到form.error 类
+        if [item for item in OPRS_DEVICE_Base.objects.filter(device_name=device_name) if
+            item.id != int(device_id)]:  # if为false，即查不到信息时，不一定完全正确，可能是一个已被删除的设备，最终判断交给view device_update主函数
+            raise forms.ValidationError('name已存在1！')  # 抛出异常到form.error 类
         return device_name
 
     def clean_device_sn(self):
         device_sn = self.cleaned_data.get('device_sn')
         device_id = self.cleaned_data.get('device_id')
-        if [item for item in OPRS_DB.objects.filter(device_sn=device_sn) if item.id != int(device_id)]:
+        if [item for item in OPRS_DEVICE_Base.objects.filter(device_sn=device_sn) if item.id != int(device_id)]:
             raise forms.ValidationError('SN已存在2！')
         return device_sn
 
@@ -347,7 +357,7 @@ class Device_update(forms.Form):
         device_id = self.cleaned_data.get('device_id')
         print(device_id)
         print(type(device_id))
-        if [item for item in OPRS_DB.objects.filter(device_ip=device_ip) if item.id != int(device_id)]:
+        if [item for item in OPRS_DEVICE_Base.objects.filter(device_ip=device_ip) if item.id != int(device_id)]:
             raise forms.ValidationError('ip已存在3！')
         return device_ip
 
@@ -361,5 +371,6 @@ class UserForm(forms.Form):
     password = forms.CharField(label=False,
                                max_length=100,
                                required=True,
-                               widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Password: t12345678"})
+                               widget=forms.PasswordInput(
+                                   attrs={"class": "form-control", "placeholder": "Password: t12345678"})
                                )
