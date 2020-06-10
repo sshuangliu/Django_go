@@ -264,8 +264,9 @@ class Device_infor(forms.Form):
                            label='备注',
                            widget=forms.Textarea(attrs={'class': "form-control"}))
 
-    def clean_device_name(self):
+    def clean_device_name(self):  # 调用字段的clean函数 并实例化该对象，只能取该字段的值，无法去其他字段值
         device_name = self.cleaned_data.get('device_name')
+        print(device_name)
         if OPRS_DEVICE_Base.objects.filter(device_name=device_name).exists():
             raise forms.ValidationError('name已存在4！')  # 抛出异常到form.errow 类
         return device_name
